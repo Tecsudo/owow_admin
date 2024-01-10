@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:owow_admin/src/view/common/background.dart';
+import 'package:provider/provider.dart';
 
+import '../../core/constants/gap_constant.dart';
+import '../../provider/temp.dart';
+import '../common/background.dart';
 import '../common/custom_button.dart';
 
-class AddQuestionPage extends StatefulWidget {
-  const AddQuestionPage({super.key});
+class AddCampaignPage extends StatefulWidget {
+  const AddCampaignPage({super.key});
 
   @override
-  State<AddQuestionPage> createState() => _AddQuestionPageState();
+  State<AddCampaignPage> createState() => _AddCampaignPageState();
 }
 
-class _AddQuestionPageState extends State<AddQuestionPage> {
-  final _feedbackFormFormKey = GlobalKey<FormState>();
+class _AddCampaignPageState extends State<AddCampaignPage> {
+  final _campaignFormFormKey = GlobalKey<FormState>();
 
   final _questionController = TextEditingController();
   final _optionsController = TextEditingController();
@@ -30,7 +33,7 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
 
   Widget _rightLayout(BuildContext context) {
     return Form(
-      key: _feedbackFormFormKey,
+      key: _campaignFormFormKey,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -97,9 +100,9 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
                                 ),
                       ),
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter Question';
-                        }
+                        // if (value == null || value.isEmpty) {
+                        //   return 'Please enter Question';
+                        // }
                         return null;
                       },
                     ),
@@ -109,18 +112,87 @@ class _AddQuestionPageState extends State<AddQuestionPage> {
               ],
             ),
           ),
-          CustomGradientElevatedButton(
-            minimumSize: const Size(313, 60),
-            buttonText: Text(
-              'Add Option',
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                  fontWeight: FontWeight.w600),
+          SizedBox(
+            height: 60,
+            width: 700,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                CustomGradientElevatedButton(
+                  minimumSize: const Size(200, 60),
+                  buttonText: Text(
+                    'Save',
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        fontWeight: FontWeight.w600),
+                  ),
+                  onPressed: () {
+                    if (_campaignFormFormKey.currentState!.validate()) {
+                      _campaignFormFormKey.currentState!.save();
+                      _addToCampaignList(_questionController.text);
+                      context.pop();
+                    }
+                  },
+                ),
+                GapConstant.w20,
+                CustomGradientElevatedButton(
+                  minimumSize: const Size(200, 60),
+                  buttonText: Text(
+                    'Cancel',
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        fontWeight: FontWeight.w600),
+                  ),
+                  onPressed: () => context.pop(),
+                ),
+              ],
             ),
-            onPressed: () => context.pop(),
           ),
+          GapConstant.h12,
         ],
       ),
     );
   }
+
+  void _addToCampaignList(String text) =>
+      Provider.of<CampaignProvider>(context, listen: false).addCampaign(text);
+
+  /* @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: _rightLayout(context),
+      ),
+    );
+  }
+
+  Widget _rightLayout(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        CustomGradientElevatedButton(
+          minimumSize: const Size(313, 60),
+          buttonText: Text(
+            'Add Option',
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                color: Theme.of(context).colorScheme.onPrimary,
+                fontWeight: FontWeight.w600),
+          ),
+          onPressed: () => context.pop(),
+        ),
+        CustomGradientElevatedButton(
+          minimumSize: const Size(313, 60),
+          buttonText: Text(
+            'Add Discount',
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                color: Theme.of(context).colorScheme.onPrimary,
+                fontWeight: FontWeight.w600),
+          ),
+          onPressed: () => context.goNamed(RouteNames.discounts.name),
+        ),
+      ],
+    );
+  } */
 }

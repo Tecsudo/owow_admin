@@ -37,6 +37,7 @@ dependencies:
   responsive_framework: ^1.1.1
   go_router: ^13.0.0
   lite_rolling_switch: ^1.0.1
+  provider: ^6.1.1
 
 dev_dependencies:
   flutter_test:

@@ -1,6 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:owow_admin/src/core/constants/size_constant.dart';
+import 'package:owow_admin/src/provider/temp.dart';
+import 'package:provider/provider.dart';
 
 import '../../../config/router/route_name.dart';
 import '../../core/constants/gap_constant.dart';
@@ -40,18 +44,38 @@ class _FeedbackPageState extends State<FeedbackPage> {
           onPressed: () => context.goNamed(RouteNames.addQuestion.name),
         ),
         GapConstant.h56,
-        _filledTile(context, title: 'Does the food tastes good?'),
-        GapConstant.h12,
-        _filledTile(context, title: 'Is the ambiance good?'),
-        GapConstant.h12,
-        _filledTile(context, title: 'Does the food tastes good?'),
-        GapConstant.h12,
-        _filledTile(context, title: 'Is the ambiance good?'),
+        SizedBox(
+          height: 700,
+          width: 800,
+          child: Consumer<FeedbackProvider>(builder: (context, value, child) {
+            return ListView.builder(
+              itemCount: value.feedbackList.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: _filledTile(
+                    context,
+                    title: value.feedbackList[index],
+                    onDelete: () {
+                      value.removeFeedback(index);
+                      setState(() {});
+                      log('delete $index');
+                    },
+                  ),
+                );
+              },
+            );
+          }),
+        ),
       ],
     );
   }
 
-  Widget _filledTile(BuildContext context, {required String title}) {
+  Widget _filledTile(
+    BuildContext context, {
+    required String title,
+    required Function onDelete,
+  }) {
     return Container(
       width: 700,
       height: 60,
@@ -71,16 +95,22 @@ class _FeedbackPageState extends State<FeedbackPage> {
             ),
           ),
           const Spacer(),
-          const Icon(
-            Icons.delete,
-            color: Color(0xFF132513),
-            size: 24,
+          IconButton(
+            onPressed: () => onDelete(),
+            icon: const Icon(
+              Icons.delete,
+              color: Color(0xFF132513),
+              size: 24,
+            ),
           ),
           GapConstant.w12,
-          const Icon(
-            Icons.edit,
-            color: Color(0xFF132513),
-            size: 24,
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(
+              Icons.edit,
+              color: Color(0xFF132513),
+              size: 24,
+            ),
           ),
           GapConstant.w12,
         ],

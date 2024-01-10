@@ -1,24 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:owow_admin/src/core/constants/gap_constant.dart';
 import 'package:owow_admin/src/provider/temp.dart';
+import 'package:owow_admin/src/view/common/background.dart';
 import 'package:provider/provider.dart';
 
-import '../../core/constants/gap_constant.dart';
-import '../common/background.dart';
 import '../common/custom_button.dart';
 
-class AddDiscountsPage extends StatefulWidget {
-  const AddDiscountsPage({super.key});
+class AddFeedbackPage extends StatefulWidget {
+  const AddFeedbackPage({super.key});
 
   @override
-  State<AddDiscountsPage> createState() => _AddDiscountsPageState();
+  State<AddFeedbackPage> createState() => _AddFeedbackPageState();
 }
 
-class _AddDiscountsPageState extends State<AddDiscountsPage> {
-  final _campaignFormFormKey = GlobalKey<FormState>();
+class _AddFeedbackPageState extends State<AddFeedbackPage> {
+  final _feedbackFormFormKey = GlobalKey<FormState>();
 
-  final _itemController = TextEditingController();
-  final _discountController = TextEditingController();
+  final _questionController = TextEditingController();
+  final _optionsController = TextEditingController();
+  List<String> list = <String>['Dropdown', 'Binary', 'Open Field', 'Sorting'];
+
+  String dropdownValue = 'Dropdown';
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +36,7 @@ class _AddDiscountsPageState extends State<AddDiscountsPage> {
 
   Widget _rightLayout(BuildContext context) {
     return Form(
-      key: _campaignFormFormKey,
+      key: _feedbackFormFormKey,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -43,38 +46,55 @@ class _AddDiscountsPageState extends State<AddDiscountsPage> {
             child: Column(
               children: [
                 Container(
+                  width: 313,
+                  height: 60,
+                  // decoration: BoxDecoration(
+                  //   color: const Color(0xFFB7CAA9),
+                  //   borderRadius: BorderRadius.circular(5.0),
+                  // ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFB7CAA9),
-                    borderRadius: BorderRadius.circular(5.0),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 15, right: 15, top: 5),
-                    child: TextFormField(
-                      controller: _itemController,
-                      style: const TextStyle(
-                        color: Color(0xFF132513),
-                        fontSize: 18,
-                        fontWeight: FontWeight.w400,
+                      gradient: const LinearGradient(
+                        begin: Alignment(1.00, 0.00),
+                        end: Alignment(-1, 0),
+                        colors: [Color(0xFF4E8649), Color(0xFF76A968)],
                       ),
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Item',
-                        helperText: 'Item',
-                        hintStyle:
-                            Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                  color: const Color(0xFF5E6E59),
-                                ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter Item ';
-                        }
-                        return null;
-                      },
+                      borderRadius: BorderRadius.circular(5),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color(0x3F000000),
+                          blurRadius: 4,
+                          offset: Offset(0, 4),
+                          spreadRadius: 0,
+                        )
+                      ]),
+                  child: DropdownButton<String>(
+                    padding: const EdgeInsets.only(left: 15, right: 15),
+                    alignment: Alignment.center,
+                    isExpanded: true,
+                    value: dropdownValue,
+                    elevation: 18,
+                    underline:
+                        Container(height: 2, color: const Color(0xFFB7CAA9)),
+                    style: const TextStyle(color: Colors.white),
+                    dropdownColor: const Color(0xFF4E8649),
+                    icon: const Icon(
+                      Icons.arrow_downward,
+                      color: Colors.white,
                     ),
+                    onChanged: (String? value) {
+                      setState(() {
+                        dropdownValue = value!;
+                      });
+                    },
+                    items: list.map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
                   ),
                 ),
-                const SizedBox(height: 20),
+                GapConstant.h20,
                 Container(
                   decoration: BoxDecoration(
                     color: const Color(0xFFB7CAA9),
@@ -83,7 +103,40 @@ class _AddDiscountsPageState extends State<AddDiscountsPage> {
                   child: Padding(
                     padding: const EdgeInsets.only(left: 15, right: 15, top: 5),
                     child: TextFormField(
-                      controller: _discountController,
+                      controller: _questionController,
+                      style: const TextStyle(
+                        color: Color(0xFF132513),
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Question',
+                        helperText: 'Question',
+                        hintStyle:
+                            Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                  color: const Color(0xFF5E6E59),
+                                ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter Question ';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                ),
+                GapConstant.h20,
+                Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFB7CAA9),
+                    borderRadius: BorderRadius.circular(5.0),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 15, right: 15, top: 5),
+                    child: TextFormField(
+                      controller: _optionsController,
                       enableSuggestions: false,
                       style: const TextStyle(
                         color: Color(0xFF132513),
@@ -92,23 +145,23 @@ class _AddDiscountsPageState extends State<AddDiscountsPage> {
                       ),
                       decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText: 'Discount',
-                        helperText: 'Discount',
+                        hintText: 'Option',
+                        helperText: 'Option',
                         hintStyle:
                             Theme.of(context).textTheme.bodyLarge?.copyWith(
                                   color: const Color(0xFF5E6E59),
                                 ),
                       ),
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter Discount';
-                        }
+                        // if (value == null || value.isEmpty) {
+                        //   return 'Please enter Question';
+                        // }
                         return null;
                       },
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
+                GapConstant.h20,
               ],
             ),
           ),
@@ -128,10 +181,9 @@ class _AddDiscountsPageState extends State<AddDiscountsPage> {
                         fontWeight: FontWeight.w600),
                   ),
                   onPressed: () {
-                    if (_campaignFormFormKey.currentState!.validate()) {
-                      _campaignFormFormKey.currentState!.save();
-                      _addToDiscountList('${_itemController.text} '
-                          ' ${_discountController.text} discount');
+                    if (_feedbackFormFormKey.currentState!.validate()) {
+                      _feedbackFormFormKey.currentState!.save();
+                      _addToFeedbackList(_questionController.text);
                       context.pop();
                     }
                   },
@@ -155,6 +207,6 @@ class _AddDiscountsPageState extends State<AddDiscountsPage> {
     );
   }
 
-  void _addToDiscountList(String text) =>
-      Provider.of<DiscountProvider>(context, listen: false).addDiscount(text);
+  void _addToFeedbackList(String text) =>
+      Provider.of<FeedbackProvider>(context, listen: false).addFeedback(text);
 }

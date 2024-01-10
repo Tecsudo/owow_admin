@@ -99,6 +99,8 @@ class _LoginPageState extends State<LoginPage> {
                   onSwipe: () {},
                   textOn: 'Email',
                   textOff: 'Phone',
+                  textOffColor: Colors.white,
+                  textOnColor: Colors.white,
                   colorOn: const Color(0xFF4E8649),
                   colorOff: const Color(0xFF4E8649),
                   iconOn: Icons.email,
