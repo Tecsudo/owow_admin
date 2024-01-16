@@ -38,6 +38,8 @@ dependencies:
   go_router: ^13.0.0
   lite_rolling_switch: ^1.0.1
   provider: ^6.1.1
+  syncfusion_flutter_datepicker: ^24.1.45
+  intl: ^0.18.1
 
 dev_dependencies:
   flutter_test:

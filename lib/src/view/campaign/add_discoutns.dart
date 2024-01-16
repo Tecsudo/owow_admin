@@ -1,7 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:owow_admin/src/provider/temp.dart';
 import 'package:provider/provider.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../../core/constants/gap_constant.dart';
 import '../common/background.dart';
@@ -19,6 +23,8 @@ class _AddDiscountsPageState extends State<AddDiscountsPage> {
 
   final _itemController = TextEditingController();
   final _discountController = TextEditingController();
+  final _expiryDateController = TextEditingController();
+  final _couponCount = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -109,6 +115,75 @@ class _AddDiscountsPageState extends State<AddDiscountsPage> {
                   ),
                 ),
                 const SizedBox(height: 20),
+                Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFB7CAA9),
+                    borderRadius: BorderRadius.circular(5.0),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 15, right: 15, top: 5),
+                    child: TextFormField(
+                      onTap: () => _onTapDateTimePicker(),
+                      controller: _expiryDateController,
+                      enableSuggestions: false,
+                      style: const TextStyle(
+                        color: Color(0xFF132513),
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Expiry Date',
+                        helperText: 'Expiry Date',
+                        hintStyle:
+                            Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                  color: const Color(0xFF5E6E59),
+                                ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter Expiry Date';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFB7CAA9),
+                    borderRadius: BorderRadius.circular(5.0),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 15, right: 15, top: 5),
+                    child: TextFormField(
+                      controller: _couponCount,
+                      enableSuggestions: false,
+                      style: const TextStyle(
+                        color: Color(0xFF132513),
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'No of Coupons',
+                        helperText: 'No of Coupons',
+                        hintStyle:
+                            Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                  color: const Color(0xFF5E6E59),
+                                ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter No of Coupons';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
               ],
             ),
           ),
@@ -157,4 +232,41 @@ class _AddDiscountsPageState extends State<AddDiscountsPage> {
 
   void _addToDiscountList(String text) =>
       Provider.of<DiscountProvider>(context, listen: false).addDiscount(text);
+
+  void _onTapDateTimePicker() {
+    showDialog<Widget>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: SizedBox(
+              width: 400,
+              height: 500,
+              child: SfDateRangePicker(
+                showTodayButton: true,
+                showActionButtons: true,
+                onSubmit: (Object? value) {
+                  log('value: $value');
+                  if (value != null) {
+                    log('value: $value');
+                    _expiryDateController.text =
+                        DateFormat.yMMMd().format(value as DateTime);
+                  }
+                  Navigator.pop(context);
+                },
+                onCancel: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+          );
+        });
+  }
 }
+
+
+    // decoration: BoxDecoration(
+    //           color: const Color(0xFFB7CAA9),
+    //           borderRadius: BorderRadius.circular(5),
+    //         ),
+    //         height: 500,
+    //         width: 400,
