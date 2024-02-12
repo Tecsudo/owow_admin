@@ -49,28 +49,3 @@ class DiscountProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
-
-class FeedbackProvider extends ChangeNotifier {
-  List<String> _feedbackList = <String>[
-    'Does the food tastes good?',
-    'Is the ambiance good?',
-    'Does the food tastes good?',
-    'Is the ambiance good?'
-  ];
-  List<String> get feedbackList => _feedbackList;
-
-  set feedbackList(List<String> value) {
-    _feedbackList = value;
-    notifyListeners();
-  }
-
-  void addFeedback(String campaign) {
-    _feedbackList.add(campaign);
-    notifyListeners();
-  }
-
-  void removeFeedback(int index) {
-    _feedbackList.removeAt(index);
-    notifyListeners();
-  }
-}

@@ -1,13 +1,12 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:owow_admin/src/core/constants/size_constant.dart';
-import 'package:owow_admin/src/provider/temp.dart';
+import 'package:owow_admin/src/model/feedback_model.dart';
 import 'package:provider/provider.dart';
 
 import '../../../config/router/route_name.dart';
 import '../../core/constants/gap_constant.dart';
+import '../../provider/feedback.dart';
 import '../common/background.dart';
 import '../common/custom_button.dart';
 
@@ -48,19 +47,18 @@ class _FeedbackPageState extends State<FeedbackPage> {
           height: 700,
           width: 800,
           child: Consumer<FeedbackProvider>(builder: (context, value, child) {
+            if (value.isLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
             return ListView.builder(
-              itemCount: value.feedbackList.length,
+              itemCount: value.feedbackModel?.data.count,
               itemBuilder: (context, index) {
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: _filledTile(
                     context,
-                    title: value.feedbackList[index],
-                    onDelete: () {
-                      value.removeFeedback(index);
-                      setState(() {});
-                      log('delete $index');
-                    },
+                    feedbackData: value.feedbackModel!.data.data[index],
+                    onDelete: () {},
                   ),
                 );
               },
@@ -73,7 +71,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
 
   Widget _filledTile(
     BuildContext context, {
-    required String title,
+    required FeedbackData feedbackData,
     required Function onDelete,
   }) {
     return Container(
@@ -87,7 +85,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
       child: Row(
         children: [
           Text(
-            title,
+            feedbackData.questionsQuery,
             style: const TextStyle(
               color: Color(0xFF132513),
               fontWeight: FontWeight.w500,

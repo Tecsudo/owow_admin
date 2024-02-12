@@ -262,11 +262,3 @@ class _AddDiscountsPageState extends State<AddDiscountsPage> {
         });
   }
 }
-
-
-    // decoration: BoxDecoration(
-    //           color: const Color(0xFFB7CAA9),
-    //           borderRadius: BorderRadius.circular(5),
-    //         ),
-    //         height: 500,
-    //         width: 400,

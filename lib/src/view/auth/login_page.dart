@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lite_rolling_switch/lite_rolling_switch.dart';
 import 'package:owow_admin/config/router/route_name.dart';
 import 'package:owow_admin/src/core/extensions/responsive_framwork.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
+import '../../provider/auth.dart';
 import '../common/background.dart';
 import '../common/custom_button.dart';
 
@@ -92,25 +92,25 @@ class _LoginPageState extends State<LoginPage> {
             width: 450,
             child: Column(
               children: [
-                LiteRollingSwitch(
-                  value: _isEnteringPhoneNumber,
-                  onTap: () {},
-                  onDoubleTap: () {},
-                  onSwipe: () {},
-                  textOn: 'Email',
-                  textOff: 'Phone',
-                  textOffColor: Colors.white,
-                  textOnColor: Colors.white,
-                  colorOn: const Color(0xFF4E8649),
-                  colorOff: const Color(0xFF4E8649),
-                  iconOn: Icons.email,
-                  iconOff: Icons.phone,
-                  onChanged: (bool state) {
-                    setState(() {
-                      _isEnteringPhoneNumber = state;
-                    });
-                  },
-                ),
+                // LiteRollingSwitch(
+                //   value: _isEnteringPhoneNumber,
+                //   onTap: () {},
+                //   onDoubleTap: () {},
+                //   onSwipe: () {},
+                //   textOn: 'Email',
+                //   textOff: 'Phone',
+                //   textOffColor: Colors.white,
+                //   textOnColor: Colors.white,
+                //   colorOn: const Color(0xFF4E8649),
+                //   colorOff: const Color(0xFF4E8649),
+                //   iconOn: Icons.email,
+                //   iconOff: Icons.phone,
+                //   onChanged: (bool state) {
+                //     setState(() {
+                //       _isEnteringPhoneNumber = state;
+                //     });
+                //   },
+                // ),
                 const SizedBox(height: 20),
                 Container(
                   decoration: BoxDecoration(
@@ -192,20 +192,20 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    const Text('Forgot Password? '),
-                    TextButton(
-                      child: const Text(
-                        'Click Here',
-                      ),
-                      onPressed: () {
-                        //TODO: Implement Forgot Password
-                      },
-                    )
-                  ],
-                ),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.end,
+                //   children: <Widget>[
+                //     const Text('Forgot Password? '),
+                //     TextButton(
+                //       child: const Text(
+                //         'Click Here',
+                //       ),
+                //       onPressed: () {
+                //         //TODO: Implement Forgot Password
+                //       },
+                //     )
+                //   ],
+                // ),
               ],
             ),
           ),
@@ -220,8 +220,27 @@ class _LoginPageState extends State<LoginPage> {
             onPressed: () {
               if (_authenticationFormKey.currentState!.validate()) {
                 _authenticationFormKey.currentState!.save();
-
-                context.goNamed(RouteNames.home.name);
+                auth(
+                  password: _passwordController.text,
+                  phone: _emailOrPhoneController.text,
+                ).then((value) {
+                  if (value == 200) {
+                    context.goNamed(RouteNames.home.name);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'Invalid Credentials',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.copyWith(color: Colors.white),
+                        ),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                });
               }
             },
           ),

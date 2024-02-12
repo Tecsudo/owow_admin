@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:owow_admin/src/core/constants/gap_constant.dart';
 import 'package:owow_admin/src/core/extensions/responsive_framwork.dart';
+
+import 'package:provider/provider.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
 import '../../../config/router/route_name.dart';
+import '../../core/constants/gap_constant.dart';
+import '../../provider/feedback.dart';
 import '../common/background.dart';
 import '../common/custom_button.dart';
 
@@ -16,6 +19,19 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  _loadData() {
+    Future.delayed(Duration.zero, () async {
+      var provider = Provider.of<FeedbackProvider>(context, listen: false);
+      await provider.getFeedbackQuestions();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,15 +81,16 @@ class _HomePageState extends State<HomePage> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         CustomGradientElevatedButton(
-          minimumSize: const Size(313, 60),
-          buttonText: Text(
-            'Feedback',
-            style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                color: Theme.of(context).colorScheme.onPrimary,
-                fontWeight: FontWeight.w600),
-          ),
-          onPressed: () => context.goNamed(RouteNames.feedback.name),
-        ),
+            minimumSize: const Size(313, 60),
+            buttonText: Text(
+              'Feedback',
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                  fontWeight: FontWeight.w600),
+            ),
+            onPressed: () {
+              context.goNamed(RouteNames.feedback.name);
+            }),
         GapConstant.h12,
         CustomGradientElevatedButton(
           minimumSize: const Size(313, 60),
