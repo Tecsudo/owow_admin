@@ -18,11 +18,9 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _authenticationFormKey = GlobalKey<FormState>();
 
-  bool _isEnteringPhoneNumber = false;
-
   bool _obscureText = true;
 
-  final _emailOrPhoneController = TextEditingController();
+  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
   void _toggle() {
@@ -31,11 +29,10 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  bool isEmailOrPhoneNumber(String input) {
+  bool isValidEmail(String input) {
     bool isEmail = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(input);
-    bool isPhoneNumber = RegExp(r'^03[0-9]{9}$').hasMatch(input);
 
-    return isEmail || isPhoneNumber;
+    return isEmail;
   }
 
   @override
@@ -92,25 +89,6 @@ class _LoginPageState extends State<LoginPage> {
             width: 450,
             child: Column(
               children: [
-                // LiteRollingSwitch(
-                //   value: _isEnteringPhoneNumber,
-                //   onTap: () {},
-                //   onDoubleTap: () {},
-                //   onSwipe: () {},
-                //   textOn: 'Email',
-                //   textOff: 'Phone',
-                //   textOffColor: Colors.white,
-                //   textOnColor: Colors.white,
-                //   colorOn: const Color(0xFF4E8649),
-                //   colorOff: const Color(0xFF4E8649),
-                //   iconOn: Icons.email,
-                //   iconOff: Icons.phone,
-                //   onChanged: (bool state) {
-                //     setState(() {
-                //       _isEnteringPhoneNumber = state;
-                //     });
-                //   },
-                // ),
                 const SizedBox(height: 20),
                 Container(
                   decoration: BoxDecoration(
@@ -120,7 +98,7 @@ class _LoginPageState extends State<LoginPage> {
                   child: Padding(
                     padding: const EdgeInsets.only(left: 15, right: 15, top: 5),
                     child: TextFormField(
-                      controller: _emailOrPhoneController,
+                      controller: _emailController,
                       style: const TextStyle(
                         color: Color(0xFF132513),
                         fontSize: 18,
@@ -128,10 +106,8 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText: _isEnteringPhoneNumber
-                            ? 'user@exapmle.com'
-                            : '03xxxxxxxxx',
-                        helperText: _isEnteringPhoneNumber ? 'Email' : 'Phone',
+                        hintText: 'user@exapmle.com',
+                        helperText: 'Email',
                         hintStyle:
                             Theme.of(context).textTheme.bodyLarge?.copyWith(
                                   color: const Color(0xFF5E6E59),
@@ -139,9 +115,9 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter your ${_isEnteringPhoneNumber ? 'email' : 'phone'}';
-                        } else if (!isEmailOrPhoneNumber(value)) {
-                          return 'Please enter a valid ${_isEnteringPhoneNumber ? 'email' : 'phone'}';
+                          return 'Please enter your email';
+                        } else if (!isValidEmail(value)) {
+                          return 'Please enter a valid email';
                         }
                         return null;
                       },
@@ -222,7 +198,7 @@ class _LoginPageState extends State<LoginPage> {
                 _authenticationFormKey.currentState!.save();
                 auth(
                   password: _passwordController.text,
-                  phone: _emailOrPhoneController.text,
+                  email: _emailController.text,
                 ).then((value) {
                   if (value == 200) {
                     context.goNamed(RouteNames.home.name);

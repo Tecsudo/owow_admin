@@ -3,24 +3,26 @@ import 'dart:developer';
 import '../core/constants/app_constant.dart';
 import '../core/services/net_services.dart';
 
-// 03001234568
+// admin@owow.com  Faraz@123
 Future<int> auth({
   required String password,
-  required String phone,
+  required String email,
 }) async {
   final networkService = GenericApi();
 
   var url = 'https://faraz369.pythonanywhere.com/api/login/';
 
   var response = await networkService.postApi(url, body: {
-    "phone": phone,
+    "restaurant_email": email,
     "password": password
   }, headers: {
     'Content-Type': 'application/json',
     'Authorization': 'Bearer ${AppConstant.jwtToken}',
   });
   String x = response['jwt'];
+  int id = response['id'];
   log(x, name: 'auth');
+  log(id.toString(), name: 'auth');
   AppConstant.jwtToken = response['jwt'];
 
   return 200;
