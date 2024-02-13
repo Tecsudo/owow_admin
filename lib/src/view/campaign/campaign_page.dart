@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:owow_admin/src/view/common/background.dart';
 import 'package:provider/provider.dart';
 
@@ -60,7 +61,6 @@ class _CampaignPageState extends State<CampaignPage> {
                   child: _filledTile(
                     context,
                     feedbackData: value.feedbackModel!.data.data[index],
-                    onDelete: () {},
                   ),
                 );
               },
@@ -71,49 +71,175 @@ class _CampaignPageState extends State<CampaignPage> {
     );
   }
 
+  void _dialog(
+    BuildContext context, {
+    required FeedbackData feedbackData,
+  }) {
+    showDialog<Widget>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Campaign Details'),
+            content: SizedBox(
+              width: 350,
+              height: 200,
+              child: RichText(
+                text: TextSpan(
+                  text: 'Question: ',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 20,
+                  ),
+                  children: <TextSpan>[
+                    TextSpan(
+                      text: feedbackData.questionsQuery,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const TextSpan(
+                      text: '\nQuestion type: ',
+                    ),
+                    TextSpan(
+                      text: feedbackData.questionType,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const TextSpan(
+                      text: '\nChoice: ',
+                    ),
+                    TextSpan(
+                      text: feedbackData.answerChoices,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const TextSpan(
+                      text: '\nDiscounted item: ',
+                    ),
+                    TextSpan(
+                      text: feedbackData.item,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const TextSpan(
+                      text: '\nDiscount: ',
+                    ),
+                    TextSpan(
+                      text: feedbackData.discount.toString(),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const TextSpan(
+                      text: '\nCoupon left: ',
+                    ),
+                    TextSpan(
+                      text: feedbackData.remaining.toString(),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const TextSpan(
+                      text: '\nExpiry date: ',
+                    ),
+                    TextSpan(
+                      text: DateFormat.yMMMd().format(feedbackData.expiryDate),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('close'),
+              ),
+            ],
+          );
+        });
+  }
+/*   void _dialog(
+    BuildContext context, {
+    required FeedbackData feedbackData,
+  }) {
+    showDialog<Widget>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Campaign Details'),
+            content: SizedBox(
+              width: 350,
+              height: 200,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text('Question: ${feedbackData.questionsQuery}'),
+                  Text('Question type: ${feedbackData.questionType}'),
+                  Text('Choice: ${feedbackData.answerChoices}'),
+                  Text('Discounted item: ${feedbackData.item}'),
+                  Text(
+                      'Expiry date: ${DateFormat.yMMMd().format(feedbackData.expiryDate)}'),
+                  Text('Coupon left: ${feedbackData.remaining}'),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('close'),
+              ),
+            ],
+          );
+        });
+  } */
+
   Widget _filledTile(
     BuildContext context, {
     required FeedbackData feedbackData,
-    required Function onDelete,
   }) {
-    return Container(
-      width: 700,
-      height: 60,
-      padding: const EdgeInsets.symmetric(horizontal: SizeConstant.p12),
-      decoration: ShapeDecoration(
-        color: const Color(0xFFB7CAA9),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-      ),
-      child: Row(
-        children: [
-          Text(
-            feedbackData.questionsQuery,
-            style: const TextStyle(
-              color: Color(0xFF132513),
-              fontWeight: FontWeight.w500,
-              height: 0,
+    return GestureDetector(
+      onTap: () => _dialog(context, feedbackData: feedbackData),
+      //  onTap: () => _dialog(context,
+      // feedbackData: value.feedbackModel!.data.data[index]),
+      child: Container(
+        width: 700,
+        height: 60,
+        padding: const EdgeInsets.symmetric(horizontal: SizeConstant.p12),
+        decoration: ShapeDecoration(
+          color: const Color(0xFFB7CAA9),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+        ),
+        child: Row(
+          children: [
+            Text(
+              feedbackData.questionsQuery,
+              style: const TextStyle(
+                color: Color(0xFF132513),
+                fontWeight: FontWeight.w500,
+                height: 0,
+              ),
             ),
-          ),
-          const Spacer(),
-          // IconButton(
-          //   onPressed: () => onDelete(),
-          //   icon: const Icon(
-          //     Icons.delete,
-          //     color: Color(0xFF132513),
-          //     size: 24,
-          //   ),
-          // ),
-          // GapConstant.w12,
-          // IconButton(
-          //   onPressed: () {},
-          //   icon: const Icon(
-          //     Icons.edit,
-          //     color: Color(0xFF132513),
-          //     size: 24,
-          //   ),
-          // ),
-          // GapConstant.w12,
-        ],
+          ],
+        ),
       ),
     );
   }

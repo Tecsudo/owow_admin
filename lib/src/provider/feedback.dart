@@ -69,10 +69,10 @@ class DataProvider extends ChangeNotifier {
     });
 
     getCampaignQuestions();
-    // log(response.toString(), name: 'addFeedbackQuestions1');
+    log(response.toString(), name: 'addFeedbackQuestions1');
 
-    // var res = Res.fromJson(response);
-    // log(res.toString(), name: 'addFeedbackQuestions');
+    var res = Res.fromJson(response);
+    log(res.toString(), name: 'addFeedbackQuestions');
     return 200;
   }
 

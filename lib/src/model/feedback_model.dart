@@ -13,19 +13,11 @@ class FeedbackModel {
 
   factory FeedbackModel.fromJson(str) => FeedbackModel.fromMap(str);
 
-  String toJson() => json.encode(toMap());
-
   factory FeedbackModel.fromMap(Map<String, dynamic> json) => FeedbackModel(
         status: json["status"],
         message: json["message"],
         data: Data.fromMap(json["data"]),
       );
-
-  Map<String, dynamic> toMap() => {
-        "status": status,
-        "message": message,
-        "data": data.toMap(),
-      };
 }
 
 class Data {
@@ -39,18 +31,11 @@ class Data {
 
   factory Data.fromJson(String str) => Data.fromMap(json.decode(str));
 
-  String toJson() => json.encode(toMap());
-
   factory Data.fromMap(Map<String, dynamic> json) => Data(
         count: json["count"],
         data: List<FeedbackData>.from(
             json["data"].map((x) => FeedbackData.fromMap(x))),
       );
-
-  Map<String, dynamic> toMap() => {
-        "count": count,
-        "data": List<dynamic>.from(data.map((x) => x.toMap())),
-      };
 }
 
 class FeedbackData {
@@ -64,6 +49,11 @@ class FeedbackData {
   final String answerChoices;
   final String questionType;
   final int restaurantId;
+  final String item;
+  final int discount;
+  final DateTime expiryDate;
+  final int totalCoupons;
+  final int remaining;
   final int user;
 
   FeedbackData({
@@ -77,13 +67,16 @@ class FeedbackData {
     required this.answerChoices,
     required this.questionType,
     required this.restaurantId,
+    required this.item,
+    required this.discount,
+    required this.expiryDate,
+    required this.totalCoupons,
+    required this.remaining,
     required this.user,
   });
 
   factory FeedbackData.fromJson(String str) =>
       FeedbackData.fromMap(json.decode(str));
-
-  String toJson() => json.encode(toMap());
 
   factory FeedbackData.fromMap(Map<String, dynamic> json) => FeedbackData(
         id: json["id"],
@@ -97,21 +90,11 @@ class FeedbackData {
         answerChoices: json["answer_choices"],
         questionType: json["question_type"],
         restaurantId: json["restaurant_id"],
+        item: json["item"],
+        discount: json["discount"],
+        expiryDate: DateTime.parse(json["expiry_date"]),
+        totalCoupons: json["total_coupons"],
+        remaining: json["remaining"],
         user: json["user"],
       );
-
-  Map<String, dynamic> toMap() => {
-        "id": id,
-        "answer_choices_list":
-            List<dynamic>.from(answerChoicesList.map((x) => x)),
-        "questions_query": questionsQuery,
-        "created_on": createdOn.toIso8601String(),
-        "updated_on": updatedOn.toIso8601String(),
-        "company_name": companyName,
-        "company_url": companyUrl,
-        "answer_choices": answerChoices,
-        "question_type": questionType,
-        "restaurant_id": restaurantId,
-        "user": user,
-      };
 }
