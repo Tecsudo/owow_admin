@@ -1,7 +1,5 @@
 import 'package:go_router/go_router.dart';
-import 'package:owow_admin/src/view/campaign/add_discoutns.dart';
 import 'package:owow_admin/src/view/campaign/add_campaign.dart';
-import 'package:owow_admin/src/view/campaign/discounts_page.dart';
 import 'package:owow_admin/src/view/feedback/add_feedback.dart';
 
 import '../../src/view/auth/login_page.dart';
@@ -57,18 +55,18 @@ final GoRouter routerConfig = GoRouter(
           name: RouteNames.addCampaign.name,
           builder: (context, state) => const AddCampaignPage(),
         ),
-        GoRoute(
-          path: RouteNames.discounts.path,
-          name: RouteNames.discounts.name,
-          builder: (context, state) => const DiscountsPage(),
-          routes: <RouteBase>[
-            GoRoute(
-              path: RouteNames.addDiscounts.path,
-              name: RouteNames.addDiscounts.name,
-              builder: (context, state) => const AddDiscountsPage(),
-            ),
-          ],
-        ),
+        // GoRoute(
+        //   path: RouteNames.discounts.path,
+        //   name: RouteNames.discounts.name,
+        //   builder: (context, state) => const DiscountsPage(),
+        //   routes: <RouteBase>[
+        //     GoRoute(
+        //       path: RouteNames.addDiscounts.path,
+        //       name: RouteNames.addDiscounts.name,
+        //       builder: (context, state) => const AddDiscountsPage(),
+        //     ),
+        //   ],
+        // ),
       ],
     ),
   ],

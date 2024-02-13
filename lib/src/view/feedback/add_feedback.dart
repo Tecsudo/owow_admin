@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:owow_admin/src/core/constants/gap_constant.dart';
+import 'package:owow_admin/src/provider/feedback.dart';
 import 'package:owow_admin/src/view/common/background.dart';
 import 'package:provider/provider.dart';
 
-import '../../provider/feedback.dart';
+import '../../core/constants/app_constant.dart';
 import '../common/custom_button.dart';
 
 class AddFeedbackPage extends StatefulWidget {
@@ -16,32 +17,21 @@ class AddFeedbackPage extends StatefulWidget {
 
 class _AddFeedbackPageState extends State<AddFeedbackPage> {
   final _feedbackFormFormKey = GlobalKey<FormState>();
-  final _feedbackSubFormFormKey = GlobalKey<FormState>();
 
   final _questionController = TextEditingController();
   final _optionsController = TextEditingController();
-  List<String> list = <String>[
-    'Multi-Option',
-    'Single-Option',
-    'Open-Field',
-    'Sorting-Option'
-  ];
-  List<String> options = <String>[];
 
   String dropdownValue = 'Multi-Option';
 
-  void _addToList() {
-    if (_feedbackSubFormFormKey.currentState!.validate()) {
-      _feedbackSubFormFormKey.currentState!.save();
-      setState(() {
-        options.add(_optionsController.text);
-        _optionsController.clear();
-      });
-    }
-  }
-
-  void _addToFeedbackList(String text) =>
-      Provider.of<FeedbackProvider>(context, listen: false).addFeedback(text);
+  void _addToFeedbackList(String question, questionType,
+          {String option = ''}) =>
+      Provider.of<DataProvider>(context, listen: false)
+          .addFeedbackQuestions(
+              question: question,
+              answerChoice: option,
+              questionType: questionType)
+          .then((value) => Provider.of<DataProvider>(context, listen: false)
+              .getFeedbackQuestions());
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +90,8 @@ class _AddFeedbackPageState extends State<AddFeedbackPage> {
                       dropdownValue = value!;
                     });
                   },
-                  items: list.map<DropdownMenuItem<String>>((String value) {
+                  items: AppConstant.list
+                      .map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(value),
@@ -111,41 +102,136 @@ class _AddFeedbackPageState extends State<AddFeedbackPage> {
               GapConstant.h20,
               Form(
                 key: _feedbackFormFormKey,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFB7CAA9),
-                    borderRadius: BorderRadius.circular(5.0),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 15, right: 15, top: 5),
-                    child: TextFormField(
-                      controller: _questionController,
-                      style: const TextStyle(
-                        color: Color(0xFF132513),
-                        fontSize: 18,
-                        fontWeight: FontWeight.w400,
+                child: Column(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFB7CAA9),
+                        borderRadius: BorderRadius.circular(5.0),
                       ),
-                      decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Question',
-                        helperText: 'Question',
-                        hintStyle:
-                            Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                  color: const Color(0xFF5E6E59),
-                                ),
+                      child: Padding(
+                        padding:
+                            const EdgeInsets.only(left: 15, right: 15, top: 5),
+                        child: TextFormField(
+                          controller: _questionController,
+                          style: const TextStyle(
+                            color: Color(0xFF132513),
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'How was the food?',
+                            helperText: 'Question',
+                            hintStyle:
+                                Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                      color: const Color(0xFF5E6E59),
+                                    ),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter Question ';
+                            }
+                            return null;
+                          },
+                        ),
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter Question ';
-                        }
-                        return null;
-                      },
                     ),
-                  ),
+                    GapConstant.h20,
+                    Visibility(
+                      visible: dropdownValue == 'Open-Field' ? false : true,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFB7CAA9),
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 15, right: 15, top: 5),
+                          child: TextFormField(
+                            controller: _optionsController,
+                            enableSuggestions: false,
+                            style: const TextStyle(
+                              color: Color(0xFF132513),
+                              fontSize: 18,
+                              fontWeight: FontWeight.w400,
+                            ),
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText: 'Good, Bad, Average',
+                              helperText: 'Add Options (,) separated',
+                              hintStyle: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.copyWith(
+                                    color: const Color(0xFF5E6E59),
+                                  ),
+                            ),
+                            validator: (value) {
+                              if ((value == null || value.isEmpty) &&
+                                  dropdownValue != 'Open-Field') {
+                                return 'Please enter an option';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                    GapConstant.h20,
+                  ],
                 ),
               ),
-              GapConstant.h20,
-              Form(
+            ],
+          ),
+        ),
+        SizedBox(
+          height: 60,
+          width: 700,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              CustomGradientElevatedButton(
+                minimumSize: const Size(200, 60),
+                buttonText: Text(
+                  'Save',
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      fontWeight: FontWeight.w600),
+                ),
+                onPressed: () {
+                  if (_feedbackFormFormKey.currentState!.validate()) {
+                    _feedbackFormFormKey.currentState!.save();
+                    // _addToFeedbackList(_questionController.text, dropdownValue,
+                    //     option: _optionsController.text);
+                    context.pop();
+                  }
+                },
+              ),
+              GapConstant.w20,
+              CustomGradientElevatedButton(
+                minimumSize: const Size(200, 60),
+                buttonText: Text(
+                  'Cancel',
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      fontWeight: FontWeight.w600),
+                ),
+                onPressed: () => context.pop(),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+
+/* 
+
+Form(
                 key: _feedbackSubFormFormKey,
                 child: Container(
                   decoration: BoxDecoration(
@@ -185,48 +271,15 @@ class _AddFeedbackPageState extends State<AddFeedbackPage> {
                   ),
                 ),
               ),
-              GapConstant.h20,
-            ],
-          ),
-        ),
-        SizedBox(
-          height: 60,
-          width: 700,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              CustomGradientElevatedButton(
-                minimumSize: const Size(200, 60),
-                buttonText: Text(
-                  'Save',
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                      fontWeight: FontWeight.w600),
-                ),
-                onPressed: () {
-                  if (_feedbackFormFormKey.currentState!.validate()) {
-                    _feedbackFormFormKey.currentState!.save();
-                    _addToFeedbackList(_questionController.text);
-                    context.pop();
-                  }
-                },
-              ),
-              GapConstant.w20,
-              CustomGradientElevatedButton(
-                minimumSize: const Size(200, 60),
-                buttonText: Text(
-                  'Cancel',
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                      fontWeight: FontWeight.w600),
-                ),
-                onPressed: () => context.pop(),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
+
+                void _addToList() {
+    if (_feedbackSubFormFormKey.currentState!.validate()) {
+      _feedbackSubFormFormKey.currentState!.save();
+      setState(() {
+        options.add(_optionsController.text);
+        _optionsController.clear();
+      });
+    }
   }
-}
+
+ */

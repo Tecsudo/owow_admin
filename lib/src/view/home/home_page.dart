@@ -27,7 +27,7 @@ class _HomePageState extends State<HomePage> {
 
   _loadData() {
     Future.delayed(Duration.zero, () async {
-      var provider = Provider.of<FeedbackProvider>(context, listen: false);
+      var provider = Provider.of<DataProvider>(context, listen: false);
       await provider.getFeedbackQuestions();
     });
   }

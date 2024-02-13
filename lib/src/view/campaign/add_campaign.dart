@@ -1,9 +1,14 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
+import '../../core/constants/app_constant.dart';
 import '../../core/constants/gap_constant.dart';
-import '../../provider/temp.dart';
+import '../../provider/feedback.dart';
 import '../common/background.dart';
 import '../common/custom_button.dart';
 
@@ -19,6 +24,27 @@ class _AddCampaignPageState extends State<AddCampaignPage> {
 
   final _questionController = TextEditingController();
   final _optionsController = TextEditingController();
+  final _itemController = TextEditingController();
+  final _discountController = TextEditingController();
+  final _expiryDateController = TextEditingController();
+  final _couponCount = TextEditingController();
+  String _selectedDate = '';
+
+  String dropdownValue = 'Multi-Option';
+
+  // void _addToCampaignList(String text) =>
+  // Provider.of<CampaignProvider>(context, listen: false).addCampaign(text);
+
+  void _addToCampaignList(String question, questionType, option, item, discount,
+          expiryDate, totalCoupons) =>
+      Provider.of<DataProvider>(context, listen: false).addCampaignQuestions(
+          question: question,
+          answerChoice: option,
+          questionType: questionType,
+          item: item,
+          discount: discount,
+          expiryDate: expiryDate,
+          totalCoupons: totalCoupons);
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +69,53 @@ class _AddCampaignPageState extends State<AddCampaignPage> {
             child: Column(
               children: [
                 Container(
+                  width: 313,
+                  height: 60,
+                  decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        begin: Alignment(1.00, 0.00),
+                        end: Alignment(-1, 0),
+                        colors: [Color(0xFF4E8649), Color(0xFF76A968)],
+                      ),
+                      borderRadius: BorderRadius.circular(5),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color(0x3F000000),
+                          blurRadius: 4,
+                          offset: Offset(0, 4),
+                          spreadRadius: 0,
+                        )
+                      ]),
+                  child: DropdownButton<String>(
+                    padding: const EdgeInsets.only(left: 15, right: 15),
+                    alignment: Alignment.center,
+                    isExpanded: true,
+                    value: dropdownValue,
+                    elevation: 18,
+                    underline:
+                        Container(height: 2, color: const Color(0xFFB7CAA9)),
+                    style: const TextStyle(color: Colors.white),
+                    dropdownColor: const Color(0xFF4E8649),
+                    icon: const Icon(
+                      Icons.arrow_downward,
+                      color: Colors.white,
+                    ),
+                    onChanged: (String? value) {
+                      setState(() {
+                        dropdownValue = value!;
+                      });
+                    },
+                    items: AppConstant.list
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                ),
+                GapConstant.h20,
+                Container(
                   decoration: BoxDecoration(
                     color: const Color(0xFFB7CAA9),
                     borderRadius: BorderRadius.circular(5.0),
@@ -58,7 +131,7 @@ class _AddCampaignPageState extends State<AddCampaignPage> {
                       ),
                       decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText: 'Question',
+                        hintText: 'How was the food?',
                         helperText: 'Question',
                         hintStyle:
                             Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -74,6 +147,80 @@ class _AddCampaignPageState extends State<AddCampaignPage> {
                     ),
                   ),
                 ),
+                Visibility(
+                    visible: dropdownValue == 'Open-Field' ? false : true,
+                    child: GapConstant.h20),
+                Visibility(
+                  visible: dropdownValue == 'Open-Field' ? false : true,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFB7CAA9),
+                      borderRadius: BorderRadius.circular(5.0),
+                    ),
+                    child: Padding(
+                      padding:
+                          const EdgeInsets.only(left: 15, right: 15, top: 5),
+                      child: TextFormField(
+                        controller: _optionsController,
+                        enableSuggestions: false,
+                        style: const TextStyle(
+                          color: Color(0xFF132513),
+                          fontSize: 18,
+                          fontWeight: FontWeight.w400,
+                        ),
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Good, Bad, Average',
+                          helperText: 'Add Options (,) separated',
+                          hintStyle:
+                              Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    color: const Color(0xFF5E6E59),
+                                  ),
+                        ),
+                        validator: (value) {
+                          if ((value == null || value.isEmpty) &&
+                              dropdownValue != 'Open-Field') {
+                            return 'Please enter an option';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+                GapConstant.h20,
+                Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFB7CAA9),
+                    borderRadius: BorderRadius.circular(5.0),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 15, right: 15, top: 5),
+                    child: TextFormField(
+                      controller: _itemController,
+                      style: const TextStyle(
+                        color: Color(0xFF132513),
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Pizza, Burger, etc.',
+                        helperText: 'Discounted Item',
+                        hintStyle:
+                            Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                  color: const Color(0xFF5E6E59),
+                                ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter Item ';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 20),
                 Container(
                   decoration: BoxDecoration(
@@ -83,7 +230,7 @@ class _AddCampaignPageState extends State<AddCampaignPage> {
                   child: Padding(
                     padding: const EdgeInsets.only(left: 15, right: 15, top: 5),
                     child: TextFormField(
-                      controller: _optionsController,
+                      controller: _discountController,
                       enableSuggestions: false,
                       style: const TextStyle(
                         color: Color(0xFF132513),
@@ -92,17 +239,86 @@ class _AddCampaignPageState extends State<AddCampaignPage> {
                       ),
                       decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText: 'Option',
-                        helperText: 'Option',
+                        hintText: '49.99',
+                        helperText: 'Discount',
                         hintStyle:
                             Theme.of(context).textTheme.bodyLarge?.copyWith(
                                   color: const Color(0xFF5E6E59),
                                 ),
                       ),
                       validator: (value) {
-                        // if (value == null || value.isEmpty) {
-                        //   return 'Please enter Question';
-                        // }
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter Discount';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFB7CAA9),
+                    borderRadius: BorderRadius.circular(5.0),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 15, right: 15, top: 5),
+                    child: TextFormField(
+                      onTap: () => _onTapDateTimePicker(),
+                      controller: _expiryDateController,
+                      enableSuggestions: false,
+                      style: const TextStyle(
+                        color: Color(0xFF132513),
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: 'Expiry Date',
+                        helperText: 'Expiry Date',
+                        hintStyle:
+                            Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                  color: const Color(0xFF5E6E59),
+                                ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter Expiry Date';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFB7CAA9),
+                    borderRadius: BorderRadius.circular(5.0),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 15, right: 15, top: 5),
+                    child: TextFormField(
+                      controller: _couponCount,
+                      enableSuggestions: false,
+                      style: const TextStyle(
+                        color: Color(0xFF132513),
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: '10',
+                        helperText: 'No of Coupons',
+                        hintStyle:
+                            Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                  color: const Color(0xFF5E6E59),
+                                ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter No of Coupons';
+                        }
                         return null;
                       },
                     ),
@@ -130,7 +346,15 @@ class _AddCampaignPageState extends State<AddCampaignPage> {
                   onPressed: () {
                     if (_campaignFormFormKey.currentState!.validate()) {
                       _campaignFormFormKey.currentState!.save();
-                      _addToCampaignList(_questionController.text);
+                      _addToCampaignList(
+                        _questionController.text,
+                        dropdownValue,
+                        _optionsController.text,
+                        _itemController.text,
+                        _discountController.text,
+                        _selectedDate,
+                        _couponCount.text,
+                      );
                       context.pop();
                     }
                   },
@@ -155,8 +379,36 @@ class _AddCampaignPageState extends State<AddCampaignPage> {
     );
   }
 
-  void _addToCampaignList(String text) =>
-      Provider.of<CampaignProvider>(context, listen: false).addCampaign(text);
+  void _onTapDateTimePicker() {
+    showDialog<Widget>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: SizedBox(
+              width: 400,
+              height: 500,
+              child: SfDateRangePicker(
+                showTodayButton: true,
+                showActionButtons: true,
+                onSubmit: (Object? value) {
+                  log('value: $value');
+                  if (value != null) {
+                    log('value: $value');
+                    _expiryDateController.text =
+                        DateFormat.yMMMd().format(value as DateTime);
+                    _selectedDate = value.toUtc().toIso8601String();
+                    log('value: $_selectedDate');
+                  }
+                  Navigator.pop(context);
+                },
+                onCancel: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+          );
+        });
+  }
 
   /* @override
   Widget build(BuildContext context) {

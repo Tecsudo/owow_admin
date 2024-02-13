@@ -46,7 +46,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
         SizedBox(
           height: 700,
           width: 800,
-          child: Consumer<FeedbackProvider>(builder: (context, value, child) {
+          child: Consumer<DataProvider>(builder: (context, value, child) {
             if (value.isLoading) {
               return const Center(child: CircularProgressIndicator());
             }

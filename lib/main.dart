@@ -23,8 +23,7 @@ class MyApp extends StatelessWidget {
             create: (_) => CampaignProvider()),
         ChangeNotifierProvider<DiscountProvider>(
             create: (_) => DiscountProvider()),
-        ChangeNotifierProvider<FeedbackProvider>(
-            create: (_) => FeedbackProvider()),
+        ChangeNotifierProvider<DataProvider>(create: (_) => DataProvider()),
         // Provider<TempProvider>(
         //   create: (_) => TempProvider(),
         // ),

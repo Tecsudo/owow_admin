@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:owow_admin/config/router/route_name.dart';
 import 'package:owow_admin/src/core/extensions/responsive_framwork.dart';
+
 import 'package:responsive_framework/responsive_framework.dart';
 
+import '../../../config/router/route_name.dart';
 import '../../provider/auth.dart';
 import '../common/background.dart';
 import '../common/custom_button.dart';
@@ -20,7 +21,7 @@ class _LoginPageState extends State<LoginPage> {
 
   bool _obscureText = true;
 
-  final _emailController = TextEditingController();
+  final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
 
   void _toggle() {
@@ -98,7 +99,9 @@ class _LoginPageState extends State<LoginPage> {
                   child: Padding(
                     padding: const EdgeInsets.only(left: 15, right: 15, top: 5),
                     child: TextFormField(
-                      controller: _emailController,
+                      controller: _usernameController,
+                      textInputAction: TextInputAction.next,
+                      keyboardType: TextInputType.emailAddress,
                       style: const TextStyle(
                         color: Color(0xFF132513),
                         fontSize: 18,
@@ -107,7 +110,7 @@ class _LoginPageState extends State<LoginPage> {
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: 'user@exapmle.com',
-                        helperText: 'Email',
+                        helperText: 'username',
                         hintStyle:
                             Theme.of(context).textTheme.bodyLarge?.copyWith(
                                   color: const Color(0xFF5E6E59),
@@ -136,6 +139,8 @@ class _LoginPageState extends State<LoginPage> {
                       controller: _passwordController,
                       enableSuggestions: false,
                       obscureText: _obscureText,
+                      textInputAction: TextInputAction.next,
+                      keyboardType: TextInputType.visiblePassword,
                       style: const TextStyle(
                         color: Color(0xFF132513),
                         fontSize: 18,
@@ -198,7 +203,7 @@ class _LoginPageState extends State<LoginPage> {
                 _authenticationFormKey.currentState!.save();
                 auth(
                   password: _passwordController.text,
-                  email: _emailController.text,
+                  username: _usernameController.text,
                 ).then((value) {
                   if (value == 200) {
                     context.goNamed(RouteNames.home.name);
