@@ -139,7 +139,7 @@ class _CampaignPageState extends State<CampaignPage> {
                       ),
                     ),
                     const TextSpan(
-                      text: '\nCoupon left: ',
+                      text: '\nCoupon remaining: ',
                     ),
                     TextSpan(
                       text: feedbackData.remaining.toString(),
