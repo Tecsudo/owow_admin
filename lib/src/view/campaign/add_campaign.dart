@@ -1,7 +1,10 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -28,9 +31,10 @@ class _AddCampaignPageState extends State<AddCampaignPage> {
   final _discountController = TextEditingController();
   final _expiryDateController = TextEditingController();
   final _couponCount = TextEditingController();
+  final _image = TextEditingController();
   String _selectedDate = '';
-
   String dropdownValue = 'Multi-Option';
+  bool isPictureUploaded = true;
 
   // void _addToCampaignList(String text) =>
   // Provider.of<CampaignProvider>(context, listen: false).addCampaign(text);
@@ -45,6 +49,31 @@ class _AddCampaignPageState extends State<AddCampaignPage> {
           discount: discount,
           expiryDate: expiryDate,
           totalCoupons: totalCoupons);
+
+  Future _imagePicker() async {
+    try {
+      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+
+      if (image == null) return;
+      Uint8List byteImage = await image.readAsBytes();
+      String base64String = base64.encode(byteImage);
+      log(byteImage.length.toString());
+      log(base64String);
+      setState(() => _image.text = 'data:image/png;base64,$base64String');
+    } on PlatformException catch (e) {
+      debugPrint('Failed to pick image: $e');
+    }
+  }
+
+  Widget _imageDecode(picture) {
+    final splitString = picture.split(',')[1];
+    final byteImage = const Base64Decoder().convert(splitString);
+    return Image.memory(
+      byteImage,
+      width: 200,
+      fit: BoxFit.fitWidth,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -325,6 +354,32 @@ class _AddCampaignPageState extends State<AddCampaignPage> {
                   ),
                 ),
                 const SizedBox(height: 20),
+                InkWell(
+                  onTap: (() {
+                    _imagePicker();
+                  }),
+                  child: Column(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(20.0),
+                        height: 150.0,
+                        width: 150.0,
+                        child: _image.text != ''
+                            ? _imageDecode(_image.text)
+                            : Image.asset(
+                                'assets/images/add_image.png',
+                                fit: BoxFit.contain,
+                              ),
+                      ),
+                      Text('Upload Picture',
+                          style: TextStyle(
+                            color: (isPictureUploaded && _image.text == '')
+                                ? Colors.red
+                                : Colors.black,
+                          )),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
