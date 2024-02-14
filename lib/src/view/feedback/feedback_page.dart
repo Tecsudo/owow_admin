@@ -71,7 +71,7 @@ class _FeedbackPageState extends State<FeedbackPage> {
 
   Widget _filledTile(
     BuildContext context, {
-    required FeedbackData feedbackData,
+    required DataModel feedbackData,
     required Function onDelete,
   }) {
     return Container(

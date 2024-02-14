@@ -1,5 +1,10 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:owow_admin/src/core/constants/gap_constant.dart';
 import 'package:owow_admin/src/provider/feedback.dart';
 import 'package:owow_admin/src/view/common/background.dart';
@@ -20,18 +25,41 @@ class _AddFeedbackPageState extends State<AddFeedbackPage> {
 
   final _questionController = TextEditingController();
   final _optionsController = TextEditingController();
-
+  final _image = TextEditingController();
   String dropdownValue = 'Multi-Option';
+  bool isPictureUploaded = true;
 
-  void _addToFeedbackList(String question, questionType,
-          {String option = ''}) =>
-      Provider.of<DataProvider>(context, listen: false)
-          .addFeedbackQuestions(
-              question: question,
-              answerChoice: option,
-              questionType: questionType)
-          .then((value) => Provider.of<DataProvider>(context, listen: false)
-              .getFeedbackQuestions());
+  void _addToFeedbackList(String question, questionType, option, image) =>
+      Provider.of<DataProvider>(context, listen: false).addFeedbackQuestions(
+          question: question,
+          answerChoice: option,
+          image: image,
+          questionType: questionType);
+
+  Future _imagePicker() async {
+    try {
+      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+
+      if (image == null) return;
+      Uint8List byteImage = await image.readAsBytes();
+      String base64String = base64.encode(byteImage);
+      log(byteImage.length.toString());
+      log(base64String);
+      setState(() => _image.text = 'data:image/png;base64,$base64String');
+    } on PlatformException catch (e) {
+      debugPrint('Failed to pick image: $e');
+    }
+  }
+
+  Widget _imageDecode(picture) {
+    final splitString = picture.split(',')[1];
+    final byteImage = const Base64Decoder().convert(splitString);
+    return Image.memory(
+      byteImage,
+      width: 200,
+      fit: BoxFit.fitWidth,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -179,6 +207,32 @@ class _AddFeedbackPageState extends State<AddFeedbackPage> {
                       ),
                     ),
                     GapConstant.h20,
+                    InkWell(
+                      onTap: (() {
+                        _imagePicker();
+                      }),
+                      child: Column(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(20.0),
+                            height: 150.0,
+                            width: 150.0,
+                            child: _image.text != ''
+                                ? _imageDecode(_image.text)
+                                : Image.asset(
+                                    'assets/images/add_image.png',
+                                    fit: BoxFit.contain,
+                                  ),
+                          ),
+                          Text('Upload Picture',
+                              style: TextStyle(
+                                color: (isPictureUploaded && _image.text == '')
+                                    ? Colors.red
+                                    : Colors.black,
+                              )),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -203,8 +257,8 @@ class _AddFeedbackPageState extends State<AddFeedbackPage> {
                 onPressed: () {
                   if (_feedbackFormFormKey.currentState!.validate()) {
                     _feedbackFormFormKey.currentState!.save();
-                    // _addToFeedbackList(_questionController.text, dropdownValue,
-                    //     option: _optionsController.text);
+                    _addToFeedbackList(_questionController.text, dropdownValue,
+                        _optionsController.text, _image.text);
                     context.pop();
                   }
                 },

@@ -50,17 +50,17 @@ class _CampaignPageState extends State<CampaignPage> {
           height: 700,
           width: 800,
           child: Consumer<DataProvider>(builder: (context, value, child) {
-            if (value.isLoading && value.feedbackModel == null) {
+            if (value.isLoading && value.campaignModel == null) {
               return const Center(child: CircularProgressIndicator());
             }
             return ListView.builder(
-              itemCount: value.feedbackModel?.data.count,
+              itemCount: value.campaignModel?.data.count,
               itemBuilder: (context, index) {
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: _filledTile(
                     context,
-                    feedbackData: value.feedbackModel!.data.data[index],
+                    feedbackData: value.campaignModel!.data.data[index],
                   ),
                 );
               },
@@ -73,7 +73,7 @@ class _CampaignPageState extends State<CampaignPage> {
 
   void _dialog(
     BuildContext context, {
-    required FeedbackData feedbackData,
+    required DataModel campaignModel,
   }) {
     showDialog<Widget>(
         context: context,
@@ -92,7 +92,7 @@ class _CampaignPageState extends State<CampaignPage> {
                   ),
                   children: <TextSpan>[
                     TextSpan(
-                      text: feedbackData.questionsQuery,
+                      text: campaignModel.questionsQuery,
                       style: const TextStyle(
                         fontWeight: FontWeight.w400,
                         fontSize: 16,
@@ -102,7 +102,7 @@ class _CampaignPageState extends State<CampaignPage> {
                       text: '\nQuestion type: ',
                     ),
                     TextSpan(
-                      text: feedbackData.questionType,
+                      text: campaignModel.questionType,
                       style: const TextStyle(
                         fontWeight: FontWeight.w400,
                         fontSize: 16,
@@ -112,7 +112,7 @@ class _CampaignPageState extends State<CampaignPage> {
                       text: '\nChoice: ',
                     ),
                     TextSpan(
-                      text: feedbackData.answerChoices,
+                      text: campaignModel.answerChoices,
                       style: const TextStyle(
                         fontWeight: FontWeight.w400,
                         fontSize: 16,
@@ -122,7 +122,7 @@ class _CampaignPageState extends State<CampaignPage> {
                       text: '\nDiscounted item: ',
                     ),
                     TextSpan(
-                      text: feedbackData.item,
+                      text: campaignModel.item,
                       style: const TextStyle(
                         fontWeight: FontWeight.w400,
                         fontSize: 16,
@@ -132,7 +132,7 @@ class _CampaignPageState extends State<CampaignPage> {
                       text: '\nDiscount: ',
                     ),
                     TextSpan(
-                      text: feedbackData.discount.toString(),
+                      text: campaignModel.discount.toString(),
                       style: const TextStyle(
                         fontWeight: FontWeight.w400,
                         fontSize: 16,
@@ -142,7 +142,7 @@ class _CampaignPageState extends State<CampaignPage> {
                       text: '\nCoupon remaining: ',
                     ),
                     TextSpan(
-                      text: feedbackData.remaining.toString(),
+                      text: campaignModel.remaining.toString(),
                       style: const TextStyle(
                         fontWeight: FontWeight.w400,
                         fontSize: 16,
@@ -152,7 +152,7 @@ class _CampaignPageState extends State<CampaignPage> {
                       text: '\nExpiry date: ',
                     ),
                     TextSpan(
-                      text: DateFormat.yMMMd().format(feedbackData.expiryDate),
+                      text: DateFormat.yMMMd().format(campaignModel.expiryDate),
                       style: const TextStyle(
                         fontWeight: FontWeight.w400,
                         fontSize: 16,
@@ -214,10 +214,10 @@ class _CampaignPageState extends State<CampaignPage> {
 
   Widget _filledTile(
     BuildContext context, {
-    required FeedbackData feedbackData,
+    required DataModel feedbackData,
   }) {
     return GestureDetector(
-      onTap: () => _dialog(context, feedbackData: feedbackData),
+      onTap: () => _dialog(context, campaignModel: feedbackData),
       //  onTap: () => _dialog(context,
       // feedbackData: value.feedbackModel!.data.data[index]),
       child: Container(

@@ -1,19 +1,19 @@
 import 'dart:convert';
 
-class FeedbackModel {
+class ResModel {
   final int status;
   final String message;
   final Data data;
 
-  FeedbackModel({
+  ResModel({
     required this.status,
     required this.message,
     required this.data,
   });
 
-  factory FeedbackModel.fromJson(str) => FeedbackModel.fromMap(str);
+  factory ResModel.fromJson(str) => ResModel.fromMap(str);
 
-  factory FeedbackModel.fromMap(Map<String, dynamic> json) => FeedbackModel(
+  factory ResModel.fromMap(Map<String, dynamic> json) => ResModel(
         status: json["status"],
         message: json["message"],
         data: Data.fromMap(json["data"]),
@@ -22,7 +22,7 @@ class FeedbackModel {
 
 class Data {
   final int count;
-  final List<FeedbackData> data;
+  final List<DataModel> data;
 
   Data({
     required this.count,
@@ -33,12 +33,12 @@ class Data {
 
   factory Data.fromMap(Map<String, dynamic> json) => Data(
         count: json["count"],
-        data: List<FeedbackData>.from(
-            json["data"].map((x) => FeedbackData.fromMap(x))),
+        data:
+            List<DataModel>.from(json["data"].map((x) => DataModel.fromMap(x))),
       );
 }
 
-class FeedbackData {
+class DataModel {
   final int id;
   final List<String> answerChoicesList;
   final String questionsQuery;
@@ -56,7 +56,7 @@ class FeedbackData {
   final int remaining;
   final int user;
 
-  FeedbackData({
+  DataModel({
     required this.id,
     required this.answerChoicesList,
     required this.questionsQuery,
@@ -75,10 +75,9 @@ class FeedbackData {
     required this.user,
   });
 
-  factory FeedbackData.fromJson(String str) =>
-      FeedbackData.fromMap(json.decode(str));
+  factory DataModel.fromJson(String str) => DataModel.fromMap(json.decode(str));
 
-  factory FeedbackData.fromMap(Map<String, dynamic> json) => FeedbackData(
+  factory DataModel.fromMap(Map<String, dynamic> json) => DataModel(
         id: json["id"],
         answerChoicesList:
             List<String>.from(json["answer_choices_list"].map((x) => x)),

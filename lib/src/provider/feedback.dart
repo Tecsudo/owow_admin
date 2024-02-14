@@ -9,30 +9,34 @@ import 'user_feedback.dart';
 
 class DataProvider extends ChangeNotifier {
   final networkService = GenericApi();
+  String baseUrl = 'https://faraz369.pythonanywhere.com/api';
   bool isLoading = false;
   bool isBack = false;
-  FeedbackModel? _feedbackModel;
+  ResModel? _feedbackModel;
+  ResModel? _campaignModel;
 
-  FeedbackModel? get feedbackModel => _feedbackModel;
+  ResModel? get feedbackModel => _feedbackModel;
+  ResModel? get campaignModel => _campaignModel;
 
   Future<int> addFeedbackQuestions({
     required String question,
     required String answerChoice,
     required String questionType,
+    required String image,
   }) async {
-    var url = 'https://faraz369.pythonanywhere.com/api/questioning/';
+    var url = '$baseUrl/questioning/';
 
     var response = await networkService.postApi(url, body: {
       "questions_query": question,
-      "company_name": "OWOW",
-      "company_url": "www.OWOW.com",
       "answer_choices": answerChoice,
       "question_type": questionType,
+      "image": image,
       "restaurant_id": AppConstant.restaurantId,
     }, headers: {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ${AppConstant.jwtToken}',
     });
+    getFeedbackQuestions();
     log(response.toString(), name: 'addFeedbackQuestions1');
 
     var res = Res.fromJson(response);
@@ -40,16 +44,31 @@ class DataProvider extends ChangeNotifier {
     return 200;
   }
 
+  Future<void> getFeedbackQuestions() async {
+    isLoading = true;
+    notifyListeners();
+    var url =
+        '$baseUrl/questioning/?restaurant_id=${AppConstant.restaurantId ?? 0}';
+
+    var response = await networkService.getApi(url, headers: {
+      'Authorization': 'Bearer ${AppConstant.jwtToken}',
+    });
+    _feedbackModel = ResModel.fromJson(response);
+    isLoading = false;
+    notifyListeners();
+  }
+
   Future<int> addCampaignQuestions({
     required String question,
     required String answerChoice,
     required String questionType,
     required String item,
+    required String image,
     required String discount,
     required String expiryDate,
     required String totalCoupons,
   }) async {
-    var url = 'https://faraz369.pythonanywhere.com/api/questioning/';
+    var url = '$baseUrl/api/questioning/review/';
 
     var response = await networkService.postApi(url, body: {
       "questions_query": question,
@@ -58,6 +77,7 @@ class DataProvider extends ChangeNotifier {
       "answer_choices": answerChoice,
       "question_type": questionType,
       "item": item,
+      "image": image,
       "discount": discount,
       "expiry_date": expiryDate,
       "total_coupons": totalCoupons,
@@ -80,26 +100,12 @@ class DataProvider extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
     var url =
-        'https://faraz369.pythonanywhere.com/api/questioning/?restaurant_id=${AppConstant.restaurantId ?? 0}';
+        '$baseUrl/questioning/review/?restaurant_id=${AppConstant.restaurantId ?? 0}';
 
     var response = await networkService.getApi(url, headers: {
       'Authorization': 'Bearer ${AppConstant.jwtToken}',
     });
-    _feedbackModel = FeedbackModel.fromJson(response);
-    isLoading = false;
-    notifyListeners();
-  }
-
-  Future<void> getFeedbackQuestions() async {
-    isLoading = true;
-    notifyListeners();
-    var url =
-        'https://faraz369.pythonanywhere.com/api/questioning/?restaurant_id=${AppConstant.restaurantId ?? 0}';
-
-    var response = await networkService.getApi(url, headers: {
-      'Authorization': 'Bearer ${AppConstant.jwtToken}',
-    });
-    _feedbackModel = FeedbackModel.fromJson(response);
+    _feedbackModel = ResModel.fromJson(response);
     isLoading = false;
     notifyListeners();
   }

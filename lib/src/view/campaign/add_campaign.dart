@@ -40,12 +40,13 @@ class _AddCampaignPageState extends State<AddCampaignPage> {
   // Provider.of<CampaignProvider>(context, listen: false).addCampaign(text);
 
   void _addToCampaignList(String question, questionType, option, item, discount,
-          expiryDate, totalCoupons) =>
+          expiryDate, totalCoupons, image) =>
       Provider.of<DataProvider>(context, listen: false).addCampaignQuestions(
           question: question,
           answerChoice: option,
           questionType: questionType,
           item: item,
+          image: image,
           discount: discount,
           expiryDate: expiryDate,
           totalCoupons: totalCoupons);
@@ -409,6 +410,7 @@ class _AddCampaignPageState extends State<AddCampaignPage> {
                         _discountController.text,
                         _selectedDate,
                         _couponCount.text,
+                        _image.text,
                       );
                       context.pop();
                     }
