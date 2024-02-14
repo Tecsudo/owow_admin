@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:owow_admin/src/model/campaign_model.dart';
 import 'package:owow_admin/src/view/common/background.dart';
 import 'package:provider/provider.dart';
 
 import '../../../config/router/route_name.dart';
 import '../../core/constants/gap_constant.dart';
 import '../../core/constants/size_constant.dart';
-import '../../model/feedback_model.dart';
-import '../../provider/feedback.dart';
+import '../../provider/data.dart';
 import '../common/custom_button.dart';
 
 class CampaignPage extends StatefulWidget {
@@ -60,7 +60,7 @@ class _CampaignPageState extends State<CampaignPage> {
                   padding: const EdgeInsets.all(8.0),
                   child: _filledTile(
                     context,
-                    feedbackData: value.campaignModel!.data.data[index],
+                    campaignDataModel: value.campaignModel!.data.data[index],
                   ),
                 );
               },
@@ -73,7 +73,7 @@ class _CampaignPageState extends State<CampaignPage> {
 
   void _dialog(
     BuildContext context, {
-    required DataModel campaignModel,
+    required CampaignDataModel campaignModel,
   }) {
     showDialog<Widget>(
         context: context,
@@ -173,53 +173,13 @@ class _CampaignPageState extends State<CampaignPage> {
           );
         });
   }
-/*   void _dialog(
-    BuildContext context, {
-    required FeedbackData feedbackData,
-  }) {
-    showDialog<Widget>(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Campaign Details'),
-            content: SizedBox(
-              width: 350,
-              height: 200,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text('Question: ${feedbackData.questionsQuery}'),
-                  Text('Question type: ${feedbackData.questionType}'),
-                  Text('Choice: ${feedbackData.answerChoices}'),
-                  Text('Discounted item: ${feedbackData.item}'),
-                  Text(
-                      'Expiry date: ${DateFormat.yMMMd().format(feedbackData.expiryDate)}'),
-                  Text('Coupon left: ${feedbackData.remaining}'),
-                ],
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('close'),
-              ),
-            ],
-          );
-        });
-  } */
 
   Widget _filledTile(
     BuildContext context, {
-    required DataModel feedbackData,
+    required CampaignDataModel campaignDataModel,
   }) {
     return GestureDetector(
-      onTap: () => _dialog(context, campaignModel: feedbackData),
-      //  onTap: () => _dialog(context,
-      // feedbackData: value.feedbackModel!.data.data[index]),
+      onTap: () => _dialog(context, campaignModel: campaignDataModel),
       child: Container(
         width: 700,
         height: 60,
@@ -231,7 +191,7 @@ class _CampaignPageState extends State<CampaignPage> {
         child: Row(
           children: [
             Text(
-              feedbackData.questionsQuery,
+              campaignDataModel.questionsQuery,
               style: const TextStyle(
                 color: Color(0xFF132513),
                 fontWeight: FontWeight.w500,

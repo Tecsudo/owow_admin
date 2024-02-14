@@ -3,10 +3,11 @@ class AppConstant {
   static const String appVersion = "1.0.0";
   static String? jwtToken;
   static int? restaurantId;
-  static List<String> list = <String>[
+  static List<String> optionList = <String>[
     'Multi-Option',
     'Single-Option',
     'Open-Field',
     'Sorting-Option'
   ];
+  static List<String> catList = <String>['Food', 'Ambience', 'Service'];
 }

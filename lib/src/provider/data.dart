@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:owow_admin/src/model/campaign_model.dart';
 
 import '../core/constants/app_constant.dart';
 import '../core/services/net_services.dart';
@@ -12,24 +13,26 @@ class DataProvider extends ChangeNotifier {
   String baseUrl = 'https://faraz369.pythonanywhere.com/api';
   bool isLoading = false;
   bool isBack = false;
-  ResModel? _feedbackModel;
-  ResModel? _campaignModel;
+  FeedbackModel? _feedbackModel;
+  CampaignModel? _campaignModel;
 
-  ResModel? get feedbackModel => _feedbackModel;
-  ResModel? get campaignModel => _campaignModel;
+  FeedbackModel? get feedbackModel => _feedbackModel;
+  CampaignModel? get campaignModel => _campaignModel;
 
   Future<int> addFeedbackQuestions({
     required String question,
     required String answerChoice,
     required String questionType,
     required String image,
+    required String cat,
   }) async {
-    var url = '$baseUrl/questioning/';
+    var url = '$baseUrl/questioning/review/';
 
     var response = await networkService.postApi(url, body: {
       "questions_query": question,
       "answer_choices": answerChoice,
       "question_type": questionType,
+      "question_category": cat,
       "image": image,
       "restaurant_id": AppConstant.restaurantId,
     }, headers: {
@@ -48,12 +51,12 @@ class DataProvider extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
     var url =
-        '$baseUrl/questioning/?restaurant_id=${AppConstant.restaurantId ?? 0}';
+        '$baseUrl/questioning/review/?restaurant_id=${AppConstant.restaurantId ?? 0}';
 
     var response = await networkService.getApi(url, headers: {
       'Authorization': 'Bearer ${AppConstant.jwtToken}',
     });
-    _feedbackModel = ResModel.fromJson(response);
+    _feedbackModel = FeedbackModel.fromJson(response);
     isLoading = false;
     notifyListeners();
   }
@@ -68,7 +71,7 @@ class DataProvider extends ChangeNotifier {
     required String expiryDate,
     required String totalCoupons,
   }) async {
-    var url = '$baseUrl/api/questioning/review/';
+    var url = '$baseUrl/api/questioning/';
 
     var response = await networkService.postApi(url, body: {
       "questions_query": question,
@@ -100,12 +103,12 @@ class DataProvider extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
     var url =
-        '$baseUrl/questioning/review/?restaurant_id=${AppConstant.restaurantId ?? 0}';
+        '$baseUrl/questioning/?restaurant_id=${AppConstant.restaurantId ?? 0}';
 
     var response = await networkService.getApi(url, headers: {
       'Authorization': 'Bearer ${AppConstant.jwtToken}',
     });
-    _feedbackModel = ResModel.fromJson(response);
+    _campaignModel = CampaignModel.fromJson(response);
     isLoading = false;
     notifyListeners();
   }

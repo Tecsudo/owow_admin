@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 
 import '../../../config/router/route_name.dart';
 import '../../core/constants/gap_constant.dart';
-import '../../provider/feedback.dart';
+import '../../provider/data.dart';
 import '../common/background.dart';
 import '../common/custom_button.dart';
 
@@ -69,49 +69,125 @@ class _FeedbackPageState extends State<FeedbackPage> {
     );
   }
 
+  void _dialog(
+    BuildContext context, {
+    required FeedbackDataModel feedbackData,
+  }) {
+    showDialog<Widget>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Feedback Details'),
+            content: SizedBox(
+              width: 350,
+              height: 200,
+              child: RichText(
+                text: TextSpan(
+                  text: 'Question: ',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 20,
+                  ),
+                  children: <TextSpan>[
+                    TextSpan(
+                      text: feedbackData.questionsQuery,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const TextSpan(
+                      text: '\nQuestion type: ',
+                    ),
+                    TextSpan(
+                      text: feedbackData.questionType,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const TextSpan(
+                      text: '\nChoice: ',
+                    ),
+                    TextSpan(
+                      text: feedbackData.answerChoices,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const TextSpan(
+                      text: '\nQuestion type: ',
+                    ),
+                    TextSpan(
+                      text: feedbackData.questionCategory,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('close'),
+              ),
+            ],
+          );
+        });
+  }
+
   Widget _filledTile(
     BuildContext context, {
-    required DataModel feedbackData,
+    required FeedbackDataModel feedbackData,
     required Function onDelete,
   }) {
-    return Container(
-      width: 700,
-      height: 60,
-      padding: const EdgeInsets.symmetric(horizontal: SizeConstant.p12),
-      decoration: ShapeDecoration(
-        color: const Color(0xFFB7CAA9),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-      ),
-      child: Row(
-        children: [
-          Text(
-            feedbackData.questionsQuery,
-            style: const TextStyle(
-              color: Color(0xFF132513),
-              fontWeight: FontWeight.w500,
-              height: 0,
+    return GestureDetector(
+      onTap: () => _dialog(context, feedbackData: feedbackData),
+      child: Container(
+        width: 700,
+        height: 60,
+        padding: const EdgeInsets.symmetric(horizontal: SizeConstant.p12),
+        decoration: ShapeDecoration(
+          color: const Color(0xFFB7CAA9),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+        ),
+        child: Row(
+          children: [
+            Text(
+              feedbackData.questionsQuery,
+              style: const TextStyle(
+                color: Color(0xFF132513),
+                fontWeight: FontWeight.w500,
+                height: 0,
+              ),
             ),
-          ),
-          const Spacer(),
-          IconButton(
-            onPressed: () => onDelete(),
-            icon: const Icon(
-              Icons.delete,
-              color: Color(0xFF132513),
-              size: 24,
+            const Spacer(),
+            IconButton(
+              onPressed: () => onDelete(),
+              icon: const Icon(
+                Icons.delete,
+                color: Color(0xFF132513),
+                size: 24,
+              ),
             ),
-          ),
-          GapConstant.w12,
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.edit,
-              color: Color(0xFF132513),
-              size: 24,
+            GapConstant.w12,
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(
+                Icons.edit,
+                color: Color(0xFF132513),
+                size: 24,
+              ),
             ),
-          ),
-          GapConstant.w12,
-        ],
+            GapConstant.w12,
+          ],
+        ),
       ),
     );
   }

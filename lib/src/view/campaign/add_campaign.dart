@@ -11,7 +11,7 @@ import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../../core/constants/app_constant.dart';
 import '../../core/constants/gap_constant.dart';
-import '../../provider/feedback.dart';
+import '../../provider/data.dart';
 import '../common/background.dart';
 import '../common/custom_button.dart';
 
@@ -135,7 +135,7 @@ class _AddCampaignPageState extends State<AddCampaignPage> {
                         dropdownValue = value!;
                       });
                     },
-                    items: AppConstant.list
+                    items: AppConstant.optionList
                         .map<DropdownMenuItem<String>>((String value) {
                       return DropdownMenuItem<String>(
                         value: value,

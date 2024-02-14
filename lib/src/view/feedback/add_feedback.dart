@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:owow_admin/src/core/constants/gap_constant.dart';
-import 'package:owow_admin/src/provider/feedback.dart';
+import 'package:owow_admin/src/provider/data.dart';
 import 'package:owow_admin/src/view/common/background.dart';
 import 'package:provider/provider.dart';
 
@@ -26,14 +26,16 @@ class _AddFeedbackPageState extends State<AddFeedbackPage> {
   final _questionController = TextEditingController();
   final _optionsController = TextEditingController();
   final _image = TextEditingController();
-  String dropdownValue = 'Multi-Option';
+  String answerChoiceValue = 'Multi-Option';
+  String catValue = 'Food';
   bool isPictureUploaded = true;
 
-  void _addToFeedbackList(String question, questionType, option, image) =>
+  void _addToFeedbackList(String question, questionType, option, image, cat) =>
       Provider.of<DataProvider>(context, listen: false).addFeedbackQuestions(
           question: question,
           answerChoice: option,
           image: image,
+          cat: cat,
           questionType: questionType);
 
   Future _imagePicker() async {
@@ -103,7 +105,7 @@ class _AddFeedbackPageState extends State<AddFeedbackPage> {
                   padding: const EdgeInsets.only(left: 15, right: 15),
                   alignment: Alignment.center,
                   isExpanded: true,
-                  value: dropdownValue,
+                  value: answerChoiceValue,
                   elevation: 18,
                   underline:
                       Container(height: 2, color: const Color(0xFFB7CAA9)),
@@ -115,10 +117,57 @@ class _AddFeedbackPageState extends State<AddFeedbackPage> {
                   ),
                   onChanged: (String? value) {
                     setState(() {
-                      dropdownValue = value!;
+                      answerChoiceValue = value!;
                     });
                   },
-                  items: AppConstant.list
+                  items: AppConstant.optionList
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+              ),
+              GapConstant.h20,
+              Container(
+                width: 313,
+                height: 60,
+                decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      begin: Alignment(1.00, 0.00),
+                      end: Alignment(-1, 0),
+                      colors: [Color(0xFF4E8649), Color(0xFF76A968)],
+                    ),
+                    borderRadius: BorderRadius.circular(5),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Color(0x3F000000),
+                        blurRadius: 4,
+                        offset: Offset(0, 4),
+                        spreadRadius: 0,
+                      )
+                    ]),
+                child: DropdownButton<String>(
+                  padding: const EdgeInsets.only(left: 15, right: 15),
+                  alignment: Alignment.center,
+                  isExpanded: true,
+                  value: catValue,
+                  elevation: 18,
+                  underline:
+                      Container(height: 2, color: const Color(0xFFB7CAA9)),
+                  style: const TextStyle(color: Colors.white),
+                  dropdownColor: const Color(0xFF4E8649),
+                  icon: const Icon(
+                    Icons.arrow_downward,
+                    color: Colors.white,
+                  ),
+                  onChanged: (String? value) {
+                    setState(() {
+                      catValue = value!;
+                    });
+                  },
+                  items: AppConstant.catList
                       .map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
@@ -167,7 +216,7 @@ class _AddFeedbackPageState extends State<AddFeedbackPage> {
                     ),
                     GapConstant.h20,
                     Visibility(
-                      visible: dropdownValue == 'Open-Field' ? false : true,
+                      visible: answerChoiceValue == 'Open-Field' ? false : true,
                       child: Container(
                         decoration: BoxDecoration(
                           color: const Color(0xFFB7CAA9),
@@ -197,7 +246,7 @@ class _AddFeedbackPageState extends State<AddFeedbackPage> {
                             ),
                             validator: (value) {
                               if ((value == null || value.isEmpty) &&
-                                  dropdownValue != 'Open-Field') {
+                                  answerChoiceValue != 'Open-Field') {
                                 return 'Please enter an option';
                               }
                               return null;
@@ -257,8 +306,12 @@ class _AddFeedbackPageState extends State<AddFeedbackPage> {
                 onPressed: () {
                   if (_feedbackFormFormKey.currentState!.validate()) {
                     _feedbackFormFormKey.currentState!.save();
-                    _addToFeedbackList(_questionController.text, dropdownValue,
-                        _optionsController.text, _image.text);
+                    _addToFeedbackList(
+                        _questionController.text,
+                        answerChoiceValue,
+                        _optionsController.text,
+                        _image.text,
+                        catValue);
                     context.pop();
                   }
                 },

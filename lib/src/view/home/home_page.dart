@@ -7,7 +7,7 @@ import 'package:responsive_framework/responsive_framework.dart';
 
 import '../../../config/router/route_name.dart';
 import '../../core/constants/gap_constant.dart';
-import '../../provider/feedback.dart';
+import '../../provider/data.dart';
 import '../common/background.dart';
 import '../common/custom_button.dart';
 
@@ -29,6 +29,7 @@ class _HomePageState extends State<HomePage> {
     Future.delayed(Duration.zero, () async {
       var provider = Provider.of<DataProvider>(context, listen: false);
       await provider.getFeedbackQuestions();
+      await provider.getCampaignQuestions();
     });
   }
 

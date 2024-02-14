@@ -5,7 +5,7 @@ import 'package:responsive_framework/responsive_framework.dart';
 
 import 'config/router/router.dart';
 import 'config/theme/theme.dart';
-import 'src/provider/feedback.dart';
+import 'src/provider/data.dart';
 import 'src/provider/temp.dart';
 
 void main() {
